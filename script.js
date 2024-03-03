@@ -58,6 +58,8 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 const displayMovements = function (movements, sorted = false) {
+    containerMovements.innerHTML = '';
+
   const mov = sorted ? movements.slice().sort((a, b) => a - b) : movements;
   mov.forEach((el, i) => {
     const type = el > 0 ? 'deposit' : 'withdrawal';
