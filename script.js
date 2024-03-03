@@ -58,6 +58,7 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 const displayMovements = function (movements, sorted = false) {
+  containerMovements.innerHTML = '';
   const mov = sorted ? movements.slice().sort((a, b) => a - b) : movements;
   mov.forEach((el, i) => {
     const type = el > 0 ? 'deposit' : 'withdrawal';
@@ -127,6 +128,8 @@ btnTransfer.addEventListener('click', e => {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
   const reciever = accounts.find(acc => acc.username == inputTransferTo.value);
+  inputTransferAmount.value = '';
+  inputTransferTo.value = '';
   if (
     amount > 0 &&
     user.balance > amount &&
@@ -138,9 +141,9 @@ btnTransfer.addEventListener('click', e => {
     balancePrint(user);
     displayMovements(user.movements);
     blanceSummary(user);
-    inputTransferAmount.value = '';
-    inputTransferTo.value = '';
+
     inputTransferAmount.blur();
+    console.log(user);
   }
 });
 
