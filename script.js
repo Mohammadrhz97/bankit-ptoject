@@ -33,9 +33,9 @@ const account2 = {
     "2019-12-25T06:04:23.907Z",
     "2020-01-25T14:18:46.235Z",
     "2020-02-05T16:33:06.386Z",
-    "2020-04-10T14:43:26.374Z",
-    "2020-06-25T18:49:59.371Z",
-    "2020-07-26T12:01:20.894Z",
+    "2024-02-28T14:43:26.374Z",
+    "2024-03-03T18:49:59.371Z",
+    "2024-03-04T12:01:20.894Z",
   ],
   currency: "USD",
   locale: "en-US",
@@ -69,6 +69,22 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+const formatMovementDate = (date) => {
+  const calcDayPassed = (date1, date2) => {
+    return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+  };
+
+  const datePassed = calcDayPassed(new Date(), date);
+  if (datePassed === 0) return "Today";
+  if (datePassed === 1) return "Yesterday";
+  if (datePassed <= 7) return `${datePassed} days ago`;
+  const day = `${date.getDate()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
 const displayMovements = function (acc, sorted = false) {
   containerMovements.innerHTML = "";
   const mov = sorted
@@ -76,16 +92,14 @@ const displayMovements = function (acc, sorted = false) {
     : acc.movements;
   mov.forEach((el, i) => {
     const time = new Date(acc.movementsDates[i]);
-    const timeDate = `${time.getDate()}`.padStart(2, 0);
-    const timeMonth = `${time.getMonth() + 1}`.padStart(2, 0);
-    const timeYear = time.getFullYear();
+    const displayTime = formatMovementDate(time);
 
     const type = el > 0 ? "deposit" : "withdrawal";
     const html = `<div class="movements__row">
           <div class="movements__type movements__type--${type}">${
       i + 1
     }${type}</div>
-          <div class="movements__date">${`${timeDate}/${timeMonth}/${timeYear}`}</div>
+          <div class="movements__date">${displayTime}</div>
           <div class="movements__value">${el.toFixed(2)}€</div>
         </div>`;
 
@@ -158,6 +172,8 @@ btnTransfer.addEventListener("click", (e) => {
   ) {
     user.movements.push(-amount);
     reciever.movements.push(amount);
+    user.movementsDates.push(new Date().toISOString());
+    reciever.movementsDates.push(new Date().toISOString());
     balancePrint(user);
     displayMovements(user);
     blanceSummary(user);
@@ -173,9 +189,10 @@ btnLoan.addEventListener("click", (e) => {
   if (amount > 0 && user.movements.some((e) => e >= amount * 0.1)) {
     setTimeout(() => {
       user.movements.push(amount);
+      user.movementsDates.push(new Date().toISOString());
 
       balancePrint(user);
-      displayMovements(movements);
+      displayMovements(user);
       blanceSummary(user);
     }, 2000);
   }
