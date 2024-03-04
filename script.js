@@ -84,23 +84,31 @@ const formatMovementDate = (date, locale) => {
   return new Intl.DateTimeFormat(locale).format(date);
 };
 
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = function (acc, sorted = false) {
   containerMovements.innerHTML = "";
   labelDate.innerHTML = new Intl.DateTimeFormat(acc.locale).format(new Date());
+
   const mov = sorted
     ? acc.movements.slice().sort((a, b) => a - b)
     : acc.movements;
   mov.forEach((el, i) => {
     const time = new Date(acc.movementsDates[i]);
     const displayTime = formatMovementDate(time, acc.locale);
-
+    const formattedMov = formatCur(el, acc.locale, acc.currency);
     const type = el > 0 ? "deposit" : "withdrawal";
     const html = `<div class="movements__row">
           <div class="movements__type movements__type--${type}">${
       i + 1
     }${type}</div>
           <div class="movements__date">${displayTime}</div>
-          <div class="movements__value">${el.toFixed(2)}€</div>
+          <div class="movements__value">${formattedMov}</div>
         </div>`;
 
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -111,21 +119,21 @@ const blanceSummary = function (user) {
   const balanceIn = user.movements
     .filter((mov) => mov > 0)
     .reduce((acc, mov) => acc + mov);
-  labelSumIn.innerHTML = `${balanceIn.toFixed(2)}€`;
+  labelSumIn.innerHTML = formatCur(balanceIn, user.locale, user.currency);
   const balanceOut = user.movements
     .filter((mov) => mov < 0)
     .reduce((acc, mov) => acc + mov);
-  labelSumOut.innerHTML = `${Math.abs(balanceOut).toFixed(2)}€`;
+  labelSumOut.innerHTML = formatCur(balanceOut, user.locale, user.currency);
   const interest = user.movements
     .filter((mov) => mov > 0)
     .map((interest) => (interest * user.interestRate) / 100)
     .reduce((acc, int) => acc + int);
-  labelSumInterest.innerHTML = `${interest.toFixed(2)}€`;
+  labelSumInterest.innerHTML = formatCur(interest, user.locale, user.currency);
 };
 
 const balancePrint = function (user) {
   user.balance = user.movements.reduce((acc, mov) => acc + mov);
-  labelBalance.innerHTML = `${user.balance.toFixed(2)}€`;
+  labelBalance.innerHTML = formatCur(user.balance, user.locale, user.currency);
 };
 
 const userName = function (acc) {
