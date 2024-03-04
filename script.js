@@ -69,30 +69,30 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const formatMovementDate = (date) => {
+const formatMovementDate = (date, locale) => {
   const calcDayPassed = (date1, date2) => {
     return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
   };
-
   const datePassed = calcDayPassed(new Date(), date);
   if (datePassed === 0) return "Today";
   if (datePassed === 1) return "Yesterday";
   if (datePassed <= 7) return `${datePassed} days ago`;
-  const day = `${date.getDate()}`.padStart(2, 0);
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
+  // const day = `${date.getDate()}`.padStart(2, 0);
+  // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  // const year = date.getFullYear();
+  // return `${day}/${month}/${year}`;
+  return new Intl.DateTimeFormat(locale).format(date);
 };
 
 const displayMovements = function (acc, sorted = false) {
   containerMovements.innerHTML = "";
+  labelDate.innerHTML = new Intl.DateTimeFormat(acc.locale).format(new Date());
   const mov = sorted
     ? acc.movements.slice().sort((a, b) => a - b)
     : acc.movements;
   mov.forEach((el, i) => {
     const time = new Date(acc.movementsDates[i]);
-    const displayTime = formatMovementDate(time);
+    const displayTime = formatMovementDate(time, acc.locale);
 
     const type = el > 0 ? "deposit" : "withdrawal";
     const html = `<div class="movements__row">
@@ -198,14 +198,6 @@ btnLoan.addEventListener("click", (e) => {
   }
   inputLoanAmount.value = "";
 });
-
-const time = new Date();
-const timeDate = `${time.getDate()}`.padStart(2, 0);
-const timeMonth = `${time.getMonth() + 1}`.padStart(2, 0);
-const timeYear = time.getFullYear();
-const timeHour = time.getHours();
-const timeMinute = `${time.getMinutes() + 1}`.padStart(2, 0);
-labelDate.innerHTML = `${timeDate}/${timeMonth}/${timeYear} ,${timeHour}:${timeMinute}`;
 
 btnClose.addEventListener("click", (e) => {
   e.preventDefault();
