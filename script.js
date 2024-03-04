@@ -74,6 +74,11 @@ const displayMovements = function (acc, sorted = false) {
   const mov = sorted
     ? acc.movements.slice().sort((a, b) => a - b)
     : acc.movements;
+
+const displayMovements = function (movements, sorted = false) {
+    containerMovements.innerHTML = '';
+
+  const mov = sorted ? movements.slice().sort((a, b) => a - b) : movements;
   mov.forEach((el, i) => {
     const time = new Date(acc.movementsDates[i]);
     const timeDate = `${time.getDate()}`.padStart(2, 0);
