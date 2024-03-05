@@ -149,18 +149,35 @@ userName(accounts);
 
 let user;
 
+let time;
+function timeCountDown() {
+  function tik() {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min}:${sec}`;
+    if (time === 0) clearInterval(timer);
+    time--;
+  }
+  time = 20;
+  tik();
+  const timer = setInterval(tik, 1000);
+  return timer;
+}
+let timer;
 btnLogin.addEventListener("click", (e) => {
   e.preventDefault();
   user = accounts.find((acc) => acc.username === inputLoginUsername.value);
   if (user.pin === +inputLoginPin.value) {
     labelWelcome.innerHTML = `Welcome back, ${user.owner.split(" ")[0]}!`;
     containerApp.style.opacity = 100;
-    balancePrint(user);
-    displayMovements(user);
-    blanceSummary(user);
     inputLoginPin.value = "";
     inputLoginUsername.value = "";
     inputLoginPin.blur();
+    if (timer) clearInterval(timer);
+    timer = timeCountDown();
+    balancePrint(user);
+    displayMovements(user);
+    blanceSummary(user);
   }
 });
 
@@ -185,9 +202,9 @@ btnTransfer.addEventListener("click", (e) => {
     balancePrint(user);
     displayMovements(user);
     blanceSummary(user);
-
     inputTransferAmount.blur();
-    console.log(user);
+    if (timer) clearInterval(timer);
+    timer = timeCountDown();
   }
 });
 
@@ -205,6 +222,8 @@ btnLoan.addEventListener("click", (e) => {
     }, 2000);
   }
   inputLoanAmount.value = "";
+  if (timer) clearInterval(timer);
+  timer = timeCountDown();
 });
 
 btnClose.addEventListener("click", (e) => {
