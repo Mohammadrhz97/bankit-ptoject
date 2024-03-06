@@ -155,10 +155,14 @@ function timeCountDown() {
     const min = String(Math.trunc(time / 60)).padStart(2, 0);
     const sec = String(time % 60).padStart(2, 0);
     labelTimer.textContent = `${min}:${sec}`;
-    if (time === 0) clearInterval(timer);
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.innerHTML = "Log in to get started";
+    }
     time--;
   }
-  time = 20;
+  time = 10;
   tik();
   const timer = setInterval(tik, 1000);
   return timer;
